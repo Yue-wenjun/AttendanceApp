@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>可视化考勤助手 - 实习模式</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- 引入 Eel 的 JS，这是连接 Python 的桥梁 -->
+    <script type="text/javascript" src="/eel.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 左侧：日历可视化区域 -->
+        <div class="calendar-section">
+            <div class="calendar-header">
+                <button id="prevMonth" class="icon-btn">&lt;</button>
+                <h2 id="monthYearDisplay">2026年4月</h2>
+                <button id="nextMonth" class="icon-btn">&gt;</button>
+            </div>
+            
+            <div class="weekdays-grid">
+                <div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div>
+            </div>
+            
+            <div id="calendarGrid" class="calendar-grid">
+                <!-- 日历格子由 JS 动态生成 -->
+            </div>
+            
+            <div class="legend-bar">
+                <span>图例：</span>
+                <span class="legend-item holiday">节假日/周末</span>
+                <span class="legend-item workday">工作日</span>
+                <span class="legend-item status-work">上班</span>
+                <span class="legend-item status-overtime">加班</span>
+                <span class="legend-item status-leave">请假</span>
+            </div>
+        </div>
+
+        <!-- 右侧：操作与统计区域 -->
+        <div class="control-section">
+            <div class="card settings-card">
+                <h3>⚙️ 薪资设置与操作</h3>
+                <p style="margin-bottom: 15px;">在左侧日历中**直接点击日期格子**涂色。（节假日点击将自动识别为加班）</p>
+                
+                <div class="input-group" style="margin-bottom: 8px;">
+                    <label>💼 计薪模式: </label>
+                    <select id="modeSelect" style="padding: 4px; border-radius: 5px; border: 1px solid #ccc; font-family: inherit;">
+                        <option value="internship">实习 (按天计费)</option>
+                        <option value="formal">正式 (按月计费)</option>
+                    </select>
+                </div>
+                
+                <div class="input-group" id="monthlyWageGroup" style="margin-bottom: 8px; display: none;">
+                    <label>💸 正式月薪 (元): </label>
+                    <input type="number" id="monthlyInput" value="15000" min="0">
+                </div>
+
+                <div class="input-group" id="dailyWageGroup" style="margin-bottom: 8px;">
+                    <label id="dailyWageLabel">💰 实习日薪 (元): </label>
+                    <input type="number" id="wageInput" value="600" min="0">
+                </div>
+
+                <!-- 🚀 新增加班倍率框 -->
+                <div class="input-group" style="margin-bottom: 8px;">
+                    <label>⏱️ 加班倍率: </label>
+                    <input type="number" id="multiplierInput" value="2.0" step="0.5" min="1.0">
+                </div>
+
+                <div class="input-group">
+                    <label>📅 每月发薪日: </label>
+                    <input type="number" id="paydayInput" value="10" min="1" max="31">
+                </div>
+
+                <div style="text-align: right; margin-top: 10px;">
+                    <button id="saveSettingsBtn" class="primary-btn">手动保存</button>
+                </div>
+            </div>
+
+            <div class="card current-month-salary">
+                <h3>💰 薪资预估</h3>
+                <div id="salaryContent">
+                    数据加载中...
+                </div>
+            </div>
+            
+            <div class="card overall-stats">
+                <h3>📊 总体统计 (自4.20入职起)</h3>
+                <div id="statsContent">
+                    数据加载中...
+                </div>
+                <div class="refresh-container">
+                    <button id="refreshStats" class="primary-btn">刷新统计</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
