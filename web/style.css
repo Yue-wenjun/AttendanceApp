@@ -1,0 +1,375 @@
+/* style.css - 现代考勤应用样式 */
+:root {
+    --bg-color: #f1f3f6;
+    --card-bg: #ffffff;
+    --text-primary: #333333;
+    --text-secondary: #777777;
+    --accent-color: #38bdf8; /* 现代蓝 */
+    --accent-color-hover: #0ea5e9;
+
+    /* 状态颜色 - 关键 */
+    --color-workday: #ffffff;    /* 正常工作日格 */
+    --border-color: #e2e8f0;
+    --color-holiday: #f3f4f6;    /* 节假日/周末 */
+    
+    --color-status-work: #e0f2fe;    /* 上班 */
+    --border-status-work: #38bdf8;
+    --text-status-work: #0369a1;
+
+    --color-status-overtime: #dcfce7; /* 加班 */
+    --border-status-overtime: #22c55e;
+    --text-status-overtime: #15803d;
+
+    --color-status-leave: #ffedd5;   /* 请假 */
+    --border-status-leave: #fb923c;
+    --text-status-leave: #c2410c;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    width: 1050px;
+    min-height: 700px; /* 【修改这里】从 fixed height 变成 min-height */
+    height: auto;      /* 【修改这里】允许自适应伸缩 */
+    background-color: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    overflow: hidden;
+    padding: 25px;
+}
+
+/* ================= 左侧日历区域 ================= */
+.calendar-section {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 人员选择栏 */
+.person-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: #fafafa;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 0.9rem;
+}
+
+.person-bar label {
+    color: var(--text-secondary);
+    font-weight: bold;
+}
+
+.person-bar select {
+    flex: 1;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    background: #fff;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.person-bar select:focus {
+    border-color: var(--accent-color);
+}
+
+.person-bar .icon-btn {
+    padding: 4px 10px;
+    font-size: 1rem;
+}
+
+/* 右侧卡片标题上的人员标签 */
+.person-tag {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 8px;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 0.75rem;
+    border-radius: 10px;
+    font-weight: normal;
+    vertical-align: middle;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.icon-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1.2rem;
+    padding: 5px 12px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+}
+
+.icon-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    background-color: #f0f9ff;
+}
+
+.weekdays-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: bold;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+}
+
+.calendar-grid {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: minmax(70px, 1fr); /* 无固定高度时也保证格子可见 */
+    gap: 8px;
+    padding: 5px;
+}
+
+/* 日历格子核心样式 */
+.day-cell {
+    background-color: var(--color-workday);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s, transform 0.1s;
+    overflow: hidden;
+}
+
+.day-cell:hover:not(.other-month) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(56, 189, 248, 0.1);
+}
+
+.day-cell:active:not(.other-month) {
+    transform: translateY(0px);
+}
+
+/* 格子内的日期数字 */
+.day-number {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+/* 非本月格子 */
+.day-cell.other-month {
+    background-color: #fafafa;
+    border-color: #f1f1f1;
+    cursor: default;
+    opacity: 0.5;
+}
+
+/* 节假日/周末样式 */
+.day-cell.holiday {
+    background-color: var(--color-holiday);
+    color: #a1a1aa; /* 淡淡的颜色 */
+}
+.day-cell.holiday .day-number {
+    color: #a1a1aa;
+}
+
+/* 涂色状态样式 - 可视化的关键 */
+.day-cell.status-work {
+    background-color: var(--color-status-work);
+    border-color: var(--border-status-work);
+}
+.day-cell.status-work .day-number {
+    color: var(--text-status-work);
+    font-weight: bold;
+}
+
+.day-cell.status-overtime {
+    background-color: var(--color-status-overtime);
+    border-color: var(--border-status-overtime);
+}
+.day-cell.status-overtime .day-number {
+    color: var(--text-status-overtime);
+    font-weight: bold;
+}
+
+.day-cell.status-leave {
+    background-color: var(--color-status-leave);
+    border-color: var(--border-status-leave);
+}
+.day-cell.status-leave .day-number {
+    color: var(--text-status-leave);
+    font-weight: bold;
+}
+
+/* 格子内的文字提示 (上班/加班/请假) */
+.day-label {
+    display: none; /* 默认隐藏，可以取消注释以显示文字 */
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+.day-cell[class*="status-"] .day-label { display: block; }
+
+.day-cell.status-work .day-label { color: var(--text-status-work); }
+.day-cell.status-overtime .day-label { color: var(--text-status-overtime); }
+.day-cell.status-leave .day-label { color: var(--text-status-leave); }
+
+
+/* 图例栏 */
+.legend-bar {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #fafafa;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.legend-item::before {
+    content: '';
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+.legend-item.holiday::before { background-color: var(--color-holiday); }
+.legend-item.workday::before { background-color: var(--color-workday); }
+.legend-item.status-work::before { background-color: var(--color-status-work); border-color: var(--border-status-work); }
+.legend-item.status-overtime::before { background-color: var(--color-status-overtime); border-color: var(--border-status-overtime); }
+.legend-item.status-leave::before { background-color: var(--color-status-leave); border-color: var(--border-status-leave); }
+
+
+/* ================= 右侧操作/统计区域 ================= */
+.control-section {
+    background-color: var(--bg-color);
+    padding: 15px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto; /* 【新增这里】内容过多时右侧自动出现滚动条 */
+    max-height: 800px;
+}
+
+.card {
+    background-color: var(--card-bg);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+}
+
+.card h3 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.card p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.data-p {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+}
+.data-label { color: var(--text-secondary); }
+.data-value { font-weight: bold; color: var(--text-primary); }
+.data-value.important { color: var(--accent-color); font-size: 1.1rem; }
+.data-value.bad { color: #ef4444; }
+
+.refresh-container {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.primary-btn {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.primary-btn:hover {
+    background-color: var(--accent-color-hover);
+}
+
+/* 新增的设置输入框样式 */
+.input-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fafafa;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.input-group label {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    font-weight: bold;
+}
+
+.input-group input {
+    width: 80px;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+    border-color: var(--accent-color);
+}

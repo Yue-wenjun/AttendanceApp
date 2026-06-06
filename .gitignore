@@ -1,0 +1,6 @@
+attendance_log.json
+attendance_log.json.bak.*
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
